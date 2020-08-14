@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "732891263785",
+    "firebase_url": "https://senselib.firebaseio.com",
+    "project_id": "senselib",
+    "storage_bucket": "senselib.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732891263785:android:b1f28778dcdffc29c77d38",
+        "android_client_info": {
+          "package_name": "com.sensorlib"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732891263785-8c7e0hdkrgib2j2o7utvabspufm0gg3q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrgAu_eC7_FHi8h0XD8z-F-SFiWvZqoUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732891263785-8c7e0hdkrgib2j2o7utvabspufm0gg3q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
