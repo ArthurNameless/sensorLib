@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.sensor.facedetection;
+package com.sensorlib.sensor.facedetection;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -45,8 +45,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionPoint;
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
-import com.sensor.SensorDelegate;
-import com.sensor.VisionProcessorBase;
+import com.sensorlib.sensor.SensorDelegate;
+import com.sensorlib.sensor.VisionProcessorBase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,10 +57,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 
-import com.sensor.common.BitmapUtils;
-import com.sensor.common.FrameMetadata;
-import com.sensor.common.GraphicOverlay;
-import com.sensor.common.RNFileUtils;
+import com.sensorlib.sensor.common.BitmapUtils;
+import com.sensorlib.sensor.common.FrameMetadata;
+import com.sensorlib.sensor.common.RNFileUtils;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
@@ -160,9 +159,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
     protected void onSuccess(
             @Nullable Bitmap originalCameraImage,
             @NonNull List<FirebaseVisionFace> faces,
-            @NonNull FrameMetadata frameMetadata,
-            @NonNull GraphicOverlay graphicOverlay) {
-        graphicOverlay.clear();
+            @NonNull FrameMetadata frameMetadata) {
         if (originalCameraImage != null) {
 //            CameraImageGraphic imageGraphic = new CameraImageGraphic(graphicOverlay, originalCameraImage);
 //            graphicOverlay.add(imageGraphic);
@@ -176,7 +173,6 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 //            FaceGraphic faceGraphic = new FaceGraphic(graphicOverlay, face, cameraFacing, overlayBitmap, downsample);
 //            graphicOverlay.add(faceGraphic);
 //        }
-        graphicOverlay.postInvalidate();
 
         if (originalCameraImage != null) {
             Log.d(TAG, "Height" + frameMetadata.getHeight());

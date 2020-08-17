@@ -1,4 +1,4 @@
-package com.sensor.facedetection;
+package com.sensorlib.sensor.facedetection;
 
 import java.util.ArrayList;
 

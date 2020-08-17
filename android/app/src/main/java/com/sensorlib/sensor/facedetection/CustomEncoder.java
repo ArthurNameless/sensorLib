@@ -1,5 +1,4 @@
-package com.sensor.facedetection;
-
+package com.sensorlib.sensor.facedetection;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -90,6 +89,7 @@ public class CustomEncoder {
      * Initializes an {@code CustomImageClassifier}.
      */
     CustomEncoder() throws FirebaseMLException {
+
         final FirebaseCustomLocalModel localModel =
                 new FirebaseCustomLocalModel.Builder().setAssetFilePath(MODEL_NAME).build();
         FirebaseModelInterpreterOptions interpreterOptions =

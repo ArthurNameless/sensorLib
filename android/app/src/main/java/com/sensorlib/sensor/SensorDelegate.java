@@ -1,4 +1,4 @@
-package com.sensor;
+package com.sensorlib.sensor;
 
 import com.facebook.react.bridge.WritableArray;
 

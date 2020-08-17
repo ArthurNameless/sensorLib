@@ -6,22 +6,21 @@
  * @flow strict-local
  */
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import ds from './ds';
+import SensePlugin from './SensePlugin';
 
 const App = () => {
+  const detect = (obj) => {
+    console.log('face detected', obj);
+  };
+
   return (
     <>
       <Text style={styles.text}>Some text</Text>
+      <SensePlugin onFacesDetected={detect} />
       {/* <RNCamera
         style={styles.camera}
         type={RNCamera.Constants.Type.front}

@@ -1,4 +1,4 @@
-package com.sensor.common;
+package com.sensorlib.sensor.common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,8 +11,8 @@ import androidx.core.util.Preconditions;
 
 import com.google.android.gms.common.images.Size;
 //import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
-import com.sensor.common.CameraSource;
-import com.sensor.common.CameraSource.SizePair;
+import com.sensorlib.sensor.common.CameraSource;
+import com.sensorlib.sensor.common.CameraSource.SizePair;
 
 /** Utility class to retrieve shared preferences. */
 public class PreferenceUtils {

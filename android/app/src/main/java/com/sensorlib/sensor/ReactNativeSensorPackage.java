@@ -1,4 +1,4 @@
-package com.sensor;
+package com.sensorlib.sensor;
 
 import java.util.Arrays;
 import java.util.Collections;

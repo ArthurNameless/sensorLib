@@ -1,4 +1,4 @@
-package com.sensor.common;
+package com.sensorlib.sensor.common;
 
 import android.net.Uri;
 import java.io.File;
