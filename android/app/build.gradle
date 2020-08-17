@@ -127,7 +127,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    aaptOptions {
+        noCompress "tflite"
+    }
     defaultConfig {
         applicationId "com.sensorlib"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -204,6 +206,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
     implementation 'com.google.firebase:firebase-ml-vision-face-model:19.0.0'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.3'
+    implementation 'org.tensorflow:tensorflow-lite:1.14.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.apache.httpcomponents:httpclient:4.5.10'
