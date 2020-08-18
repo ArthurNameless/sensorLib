@@ -1,6 +1,11 @@
 package com.sensorlib.sensor;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -13,7 +18,11 @@ import com.sensorlib.sensor.common.CameraSource;
 import com.sensorlib.sensor.facedetection.FaceDetectionProcessor;
 import com.facebook.react.bridge.Promise;
 
+import java.io.IOException;
+
 import javax.annotation.Nullable;
+
+import static androidx.core.app.ActivityCompat.requestPermissions;
 
 public class ReactNativeSensorModule extends ReactContextBaseJavaModule implements SensorDelegate {
 
@@ -21,14 +30,28 @@ public class ReactNativeSensorModule extends ReactContextBaseJavaModule implemen
     private final CameraSource cameraSource;
     private static final String FACES_DETECTED_EVENT = "FacesDetectedEvent";
     private String cacheDirectory = "";
+    public final int REQUEST_CODE = 1001;
 
-    public ReactNativeSensorModule(ReactApplicationContext reactContext) {
+
+    public ReactNativeSensorModule(ReactApplicationContext reactContext) throws IOException {
         super(reactContext);
         this.reactContext = reactContext;
         cameraSource = new CameraSource(this.reactContext.getCurrentActivity());
         cameraSource.setMachineLearningFrameProcessor(
                 new FaceDetectionProcessor(this.reactContext.getResources(), this, this.reactContext));
+        if (ContextCompat.checkSelfPermission(
+                this.reactContext, Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED) {
+            cameraSource.start();
+        } else {
+//            requestPermissions(this,
+//                    new String[] { Manifest.permission.CAMERA },
+//                    REQUEST_CODE);
+        }
+
+        Log.d("onCameraStart", "camera=: " + cameraSource);
     }
+
 
     @Override
     public String getName() {

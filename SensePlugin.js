@@ -9,8 +9,8 @@ const FACES_DETECTED_EVENT = 'FacesDetectedEvent';
 export default ({onFacesDetected}) => {
   useEffect(() => {
     const dir = `${RNFS.CachesDirectoryPath}/Camera/`;
-    console.log('ReactNativeSensor', ReactNativeSensor);
     ReactNativeSensor.init(dir);
+    console.log('ReactNativeSensor init', ReactNativeSensor);
     DeviceEventEmitter.removeAllListeners(FACES_DETECTED_EVENT);
     DeviceEventEmitter.addListener(FACES_DETECTED_EVENT, onFacesDetected);
 

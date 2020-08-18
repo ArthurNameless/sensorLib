@@ -155,19 +155,28 @@ public class CameraSource {
     @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.CAMERA)
     public synchronized CameraSource start() throws IOException {
+        Log.d("CameraSourceTAG", "started");
         if (camera != null) {
+            Log.d("CameraSourceTAG", "Camera is not null");
             return this;
         }
-
+        Log.d("CameraSourceTAG", "after if");
         camera = createCamera();
+        Log.d("CameraSourceTAG", "camera created");
         dummySurfaceTexture = new SurfaceTexture(DUMMY_TEXTURE_NAME);
+        Log.d("CameraSourceTAG", "dummySurfaceTexture");
         camera.setPreviewTexture(dummySurfaceTexture);
+        Log.d("CameraSourceTAG", "setPreviewTexture dummySurfaceTexture");
         usingSurfaceTexture = true;
+        Log.d("CameraSourceTAG", "usingSurfaceTexture");
         camera.startPreview();
-
+        Log.d("CameraSourceTAG", "camera.startPreview");
         processingThread = new Thread(processingRunnable);
+        Log.d("CameraSourceTAG", "processingThread");
         processingRunnable.setActive(true);
+        Log.d("CameraSourceTAG", "processingRunnable");
         processingThread.start();
+        Log.d("CameraSourceTAG", "processingThread");
         return this;
     }
 
@@ -267,13 +276,18 @@ public class CameraSource {
      */
     @SuppressLint("InlinedApi")
     private Camera createCamera() throws IOException {
+        Log.d("CameraSourceTAG", "createCamera");
         int requestedCameraId = getIdForRequestedCamera(facing);
+        Log.d("CameraSourceTAG", "requestedCameraId" + requestedCameraId);
         if (requestedCameraId == -1) {
+            Log.d("CameraSourceTAG", "Could not find requested camera");
             throw new IOException("Could not find requested camera.");
         }
         Camera camera = Camera.open(requestedCameraId);
+        Log.d("CameraSourceTAG", "Camera.open");
 
         SizePair sizePair = PreferenceUtils.getCameraPreviewSizePair(activity, requestedCameraId);
+        Log.d("CameraSourceTAG", "sizePair: " + sizePair);
         if (sizePair == null) {
             Log.d(TAG, "No preferred preview size: display size is used as preference instead.");
             DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
@@ -508,9 +522,12 @@ public class CameraSource {
      * @param cameraId the camera id to set rotation based on
      */
     private void setRotation(Camera camera, Camera.Parameters parameters, int cameraId) {
+        Log.d("CameraSourceTAG", "setRotation");
         WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        Log.d("CameraSourceTAG", "windowManager =" + windowManager);
         int degrees = 0;
         int rotation = windowManager.getDefaultDisplay().getRotation();
+        Log.d("CameraSourceTAG", "rotation =" + rotation);
         switch (rotation) {
             case Surface.ROTATION_0:
                 degrees = 0;
