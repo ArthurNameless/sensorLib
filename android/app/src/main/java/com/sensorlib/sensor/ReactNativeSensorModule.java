@@ -27,7 +27,7 @@ import static androidx.core.app.ActivityCompat.requestPermissions;
 public class ReactNativeSensorModule extends ReactContextBaseJavaModule implements SensorDelegate {
 
     private final ReactApplicationContext reactContext;
-    private final CameraSource cameraSource;
+    private CameraSource cameraSource;
     private static final String FACES_DETECTED_EVENT = "FacesDetectedEvent";
     private String cacheDirectory = "";
     public final int REQUEST_CODE = 1001;
@@ -36,20 +36,6 @@ public class ReactNativeSensorModule extends ReactContextBaseJavaModule implemen
     public ReactNativeSensorModule(ReactApplicationContext reactContext) throws IOException {
         super(reactContext);
         this.reactContext = reactContext;
-        cameraSource = new CameraSource(this.reactContext.getCurrentActivity());
-        cameraSource.setMachineLearningFrameProcessor(
-                new FaceDetectionProcessor(this.reactContext.getResources(), this, this.reactContext));
-        if (ContextCompat.checkSelfPermission(
-                this.reactContext, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED) {
-            cameraSource.start();
-        } else {
-//            requestPermissions(this,
-//                    new String[] { Manifest.permission.CAMERA },
-//                    REQUEST_CODE);
-        }
-
-        Log.d("onCameraStart", "camera=: " + cameraSource);
     }
 
 
@@ -89,6 +75,27 @@ public class ReactNativeSensorModule extends ReactContextBaseJavaModule implemen
     public void init(String cacheDirectory) {
         Log.d("onInitTAG", "dir: " + cacheDirectory);
         setCacheDirectory(cacheDirectory);
+        cameraSource = new CameraSource(this.reactContext.getCurrentActivity());
+        cameraSource.setMachineLearningFrameProcessor(
+                new FaceDetectionProcessor(this.reactContext.getResources(), this, this.reactContext));
+        if (ContextCompat.checkSelfPermission(this.reactContext, Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED) {
+            Log.d("CameraSourceTAG", "Camera permission granted");
+            try {
+                cameraSource.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("CameraSourceTAG", "Cannot start cameraSource");
+            }
+        } else {
+            Log.d("CameraSourceTAG", "Camera permission not granted");
+            requestPermissions(
+                    reactContext.getCurrentActivity(),
+                    new String[] { Manifest.permission.CAMERA },
+                    REQUEST_CODE);
+        }
+
+        Log.d("onCameraStart", "camera=: " + cameraSource);
     }
 
     private void sendEvent(String eventName,
