@@ -181,8 +181,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
             Log.d(TAG, "Width" + frameMetadata.getWidth());
             Log.d(TAG, "Rotation" + frameMetadata.getRotation());
             Log.d(TAG, "CameraFacing" + frameMetadata.getCameraFacing());
-            WritableArray faceData = extractFaces(originalCameraImage, faces);
-            mDelegate.onFacesDetected(faceData);
+            extractFaces(originalCameraImage, faces);
         }
     }
 
@@ -284,13 +283,11 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
         return trackedFace;
     }
 
-    private WritableArray extractFaces(Bitmap originalCameraImage, List<FirebaseVisionFace> faces) {
+    private void extractFaces(Bitmap originalCameraImage, List<FirebaseVisionFace> faces) {
         String cacheDirectory = mDelegate.getCacheDirectory();
-        WritableArray faceData = Arguments.createArray();
         if (cacheDirectory != null) {
             for (FirebaseVisionFace face : faces) {
                 // Bitmap scaledBitmap = transformImage(originalCameraImage, face);
-
                 int x = (int) (downsample * face.getBoundingBox().exactCenterX() - (downsample * face.getBoundingBox().width() / 2) - (face.getBoundingBox().width() * DENFLATION_COEF));
                 int y = (int) (downsample * face.getBoundingBox().exactCenterY() - (downsample * face.getBoundingBox().height() / 2) - (face.getBoundingBox().height() * DENFLATION_COEF));
                 int height = (int) (downsample * face.getBoundingBox().height() * INFLATION_COEF);
@@ -310,26 +307,27 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
                     Log.e(TAG, "Custom encoder failed to load.");
                 } else {
                     try {
-                        float[] result = customEncoder.encodeFaceBitmap(cropped).getResult()[0];
-                        if (clusters.recordFace(null, result, face.getTrackingId())) {
-                            Log.d(TAG, "New person is found.");
-                            // Save the face to return it later.
-                            WritableMap trackedFace = saveFace(scaledBitmap, cacheDirectory, face);
-                            if (trackedFace != null) {
-                                faceData.pushMap(trackedFace);
+                        customEncoder.encodeFaceBitmap(cropped).addOnSuccessListener( result -> {
+                            float[] vector = result[0];
+                            if (clusters.recordFace(null, vector, face.getTrackingId())) {
+                                Log.d(TAG, "New person is found.");
+                                // Save the face to return it later.
+                                WritableMap trackedFace = saveFace(scaledBitmap, cacheDirectory, face);
+                                if (trackedFace != null) {
+                                    WritableArray faceData = Arguments.createArray();
+                                    faceData.pushMap(trackedFace);
+                                    mDelegate.onFacesDetected(faceData);
+                                }
+                            } else {
+                                Log.d(TAG, "Encoded face is known.");
                             }
-                        } else {
-                            Log.d(TAG, "Encoded face is known.");
-                        }
+                        });
                     } catch (FirebaseMLException e) {
                         e.printStackTrace();
                     }
                 }
-
-
             }
         }
-        return faceData;
     }
 
     private String writeStreamToFile(String cacheDirectory, ByteArrayOutputStream inputStream) throws IOException {
