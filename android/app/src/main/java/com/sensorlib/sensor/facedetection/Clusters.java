@@ -7,7 +7,8 @@ import java.util.Set;
 public class Clusters {
     private Set<Integer> clearedTrackingIds;
     private ArrayList<FoundFace> foundFaces;
-    private static final float distanceThreshold = 29.0f;
+    private static final float uncertaintyThreshold = 31.0f;
+    private static final float certaintyThreshold = 28.0f;
 
     Clusters() {
         clearedTrackingIds = new HashSet<>();
@@ -32,9 +33,13 @@ public class Clusters {
         }
         // Check is the face already known
         for (FoundFace foundFace : foundFaces) {
-            if (distance512(foundFace.vector, vector) < distanceThreshold) {
+            double vectorsDistance = distance512(foundFace.vector, vector);
+            if (vectorsDistance < certaintyThreshold) {
                 // The face is already known
                 clearedTrackingIds.add(trackingId);
+                return false;
+            }
+            if (vectorsDistance < uncertaintyThreshold) {
                 return false;
             }
         }
