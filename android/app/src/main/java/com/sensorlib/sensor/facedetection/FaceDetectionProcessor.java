@@ -107,6 +107,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 
     private final FirebaseVisionFaceDetector detector;
     private final Context context;
+    private final Clusters clusters;
 
     private final Bitmap overlayBitmap;
 
@@ -133,6 +134,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
         } catch (FirebaseMLException e) {
             e.printStackTrace();
         }
+        clusters = new Clusters();
     }
 
     @Override
@@ -264,6 +266,24 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
         Log.e(TAG, "Face detection failed " + e);
     }
 
+    private WritableMap saveFace(Bitmap scaledBitmap, String cacheDirectory, FirebaseVisionFace face) {
+        ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 95, imageStream);
+        String fileUri = "";
+        try {
+            String filePath = writeStreamToFile(cacheDirectory, imageStream);
+            File imageFile = new File(filePath);
+            fileUri = Uri.fromFile(imageFile).toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        WritableMap trackedFace = Arguments.createMap();
+        trackedFace.putString("fileURI", fileUri);
+        trackedFace.putString("trackingId", Integer.toString(face.getTrackingId()));
+        return trackedFace;
+    }
+
     private WritableArray extractFaces(Bitmap originalCameraImage, List<FirebaseVisionFace> faces) {
         String cacheDirectory = mDelegate.getCacheDirectory();
         WritableArray faceData = Arguments.createArray();
@@ -284,34 +304,23 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
                     e.printStackTrace();
                     continue;
                 }
-                ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 95, imageStream);
-                String fileUri = "";
-                try {
-                    String filePath = writeStreamToFile(cacheDirectory, imageStream);
-                    File imageFile = new File(filePath);
-                    fileUri = Uri.fromFile(imageFile).toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-                WritableMap trackedFace = Arguments.createMap();
-                trackedFace.putString("fileURI", fileUri);
-                trackedFace.putString("trackingId", Integer.toString(face.getTrackingId()));
-                faceData.pushMap(trackedFace);
 
                 // Encoding starts here
                 if (customEncoder == null) {
                     Log.e(TAG, "Custom encoder failed to load.");
                 } else {
                     try {
-                        customEncoder.encodeFaceBitmap(cropped).addOnSuccessListener(
-                                result -> {
-                                    Log.d(TAG, "Face encoded.");
-                                    // sendVectorBytes(result);
-
-                                }
-                        );
+                        float[] result = customEncoder.encodeFaceBitmap(cropped).getResult()[0];
+                        if (clusters.recordFace(null, result, face.getTrackingId())) {
+                            Log.d(TAG, "New person is found.");
+                            // Save the face to return it later.
+                            WritableMap trackedFace = saveFace(scaledBitmap, cacheDirectory, face);
+                            if (trackedFace != null) {
+                                faceData.pushMap(trackedFace);
+                            }
+                        } else {
+                            Log.d(TAG, "Encoded face is known.");
+                        }
                     } catch (FirebaseMLException e) {
                         e.printStackTrace();
                     }
