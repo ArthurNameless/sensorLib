@@ -7,8 +7,8 @@ import java.util.Set;
 public class Clusters {
     private Set<Integer> clearedTrackingIds;
     private ArrayList<FoundFace> foundFaces;
-    private static final float uncertaintyThreshold = 31.0f;
-    private static final float certaintyThreshold = 28.0f;
+    private static final float uncertaintyThreshold = 28.0f;
+    private static final float certaintyThreshold = 25.0f;
 
     Clusters() {
         clearedTrackingIds = new HashSet<>();

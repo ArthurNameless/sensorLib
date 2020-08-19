@@ -87,6 +87,7 @@ public class ReactNativeSensorModule extends ReactContextBaseJavaModule implemen
                 e.printStackTrace();
                 Log.d("CameraSourceTAG", "Cannot start cameraSource");
             }
+
         } else {
             Log.d("CameraSourceTAG", "Camera permission not granted");
             requestPermissions(
